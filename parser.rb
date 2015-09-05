@@ -10,20 +10,18 @@ class Parser < Parslet::Parser
 
   root(:value)
 
-  rule(:value, label: 'value') { vector | color | primitive }
-
-  rule(:primitive, label: 'primitive') do
-    float | integer | boolean | identifier
+  rule(:value, label: 'value') do
+    vector | color | float | integer | boolean | identifier
   end
 
-  rule(:primitives_2_4, label: 'comma separated primitives (2-4)') do
-    (primitive >> space_breaks >>
+  rule(:values_2_4, label: 'comma separated values (2-4)') do
+    (value >> space_breaks >>
       (comma >> space_breaks >> right_paren.absent? | right_paren.present?))
       .repeat(2, 4)
   end
 
   rule(:vector, label: 'vector') do
-    (left_paren >> space_breaks >> primitives_2_4 >> right_paren).as(:vector)
+    (left_paren >> space_breaks >> values_2_4 >> right_paren).as(:vector)
   end
 
   rule(:identifier, label: 'identifier') do

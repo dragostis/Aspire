@@ -56,7 +56,6 @@ describe Parser do
       expect(value_parser).to parse('(hey, ya)')
       expect(value_parser).to_not parse('(1)')
       expect(value_parser).to_not parse('(#fff)')
-      expect(value_parser).to_not parse('((1, 2), (3, 4))')
     end
 
     it 'parses identifiers' do
