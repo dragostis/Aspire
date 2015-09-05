@@ -58,6 +58,14 @@ describe Parser do
       expect(value_parser).to_not parse('(#fff)')
     end
 
+    it 'parses matrices' do
+      expect(value_parser).to parse('((1, 2), (3, 4))')
+      expect(value_parser).to parse('((1, 2), (3, 4), (1, 2), (3, 4))')
+      expect(value_parser).to parse("((\n1 \n, \n2 , \n3\n)\n, \n(4, 5))")
+      expect(value_parser).to_not parse('((1, 2, 3, 4, 5), (1, 2, 3, 4, 5))')
+      expect(value_parser).to_not parse('((1, 2))')
+    end
+
     it 'parses identifiers' do
       expect(value_parser).to parse('camelCase')
       expect(value_parser).to parse('snake_case')

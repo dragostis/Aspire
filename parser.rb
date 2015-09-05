@@ -11,11 +11,21 @@ class Parser < Parslet::Parser
   root(:value)
 
   rule(:value, label: 'value') do
-    vector | color | float | integer | boolean | identifier
+    matrix | vector | color | float | integer | boolean | identifier
   end
 
   rule(:values_2_4, label: 'comma separated values (2-4)') do
     (value >> space_breaks >>
+      (comma >> space_breaks >> right_paren.absent? | right_paren.present?))
+      .repeat(2, 4)
+  end
+
+  rule(:matrix, label: 'matrix') do
+    (left_paren >> space_breaks >> vectors_2_4 >> right_paren).as(:matrix)
+  end
+
+  rule(:vectors_2_4, label: 'comma separated vectors (2-4)') do
+    (vector >> space_breaks >>
       (comma >> space_breaks >> right_paren.absent? | right_paren.present?))
       .repeat(2, 4)
   end
