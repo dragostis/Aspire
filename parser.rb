@@ -10,8 +10,20 @@ class Parser < Parslet::Parser
 
   root(:value)
 
-  rule(:value, label: 'value') do
-    color | float | integer | boolean | identifier
+  rule(:value, label: 'value') { vector | color | primitive }
+
+  rule(:primitive, label: 'primitive') do
+    float | integer | boolean | identifier
+  end
+
+  rule(:primitives_2_4, label: 'comma separated primitives (2-4)') do
+    (primitive >> space_breaks >>
+      (comma >> space_breaks >> right_paren.absent? | right_paren.present?))
+      .repeat(2, 4)
+  end
+
+  rule(:vector, label: 'vector') do
+    (left_paren >> space_breaks >> primitives_2_4 >> right_paren).as(:vector)
   end
 
   rule(:identifier, label: 'identifier') do
@@ -23,9 +35,7 @@ class Parser < Parslet::Parser
   end
 
   rule(:color_24bit, label: '24-bit color') { hex_digit.repeat(6, 6) }
-
   rule(:color_12bit, label: '12-bit color') { hex_digit.repeat(3, 3) }
-
   rule(:alpha, label: 'alpha') { hex_digit.repeat(2, 2) }
 
   rule(:float, label: 'float') do
@@ -53,6 +63,16 @@ class Parser < Parslet::Parser
   end
 
   rule(:boolean, label: 'boolean') { (str('true') | str('false')).as(:boolean) }
+
+  rule(:space, label: 'optional space') { match['\s'].repeat }
+  rule(:space_breaks, label: 'optional space with breaks') do
+    match['\s\n'].repeat
+  end
+
+  rule(:comma, label: 'comma') { str(',') }
+
+  rule(:left_paren, label: 'left parenthesis') { str('(') }
+  rule(:right_paren, label: 'right parenthesis') { str(')') }
 
   rule(:alpha_underscore, label: 'alpha with underscore') { match['a-zA-Z_'] }
   rule(:alphanum_underscore, label: 'alphanumeric with underscore') do
