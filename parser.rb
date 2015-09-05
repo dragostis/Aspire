@@ -33,8 +33,8 @@ class Parser < Parslet::Parser
   end
 
   rule(:fraction, label: 'fraction') do
-    digits >> decimal_point >> digits.maybe |
-      digits.maybe >> decimal_point >> digits
+    number >> decimal_point >> digits.maybe |
+      number.maybe >> decimal_point >> digits
   end
 
   rule(:exponent, label: 'exponent') do
