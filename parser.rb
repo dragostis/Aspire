@@ -11,13 +11,23 @@ class Parser < Parslet::Parser
   root(:value)
 
   rule(:value, label: 'value') do
-    matrix | vector | color | float | integer | boolean | identifier
+    array | matrix | vector | color | float | integer | boolean | identifier
+  end
+
+  rule(:values, label: 'comma separated values') do
+    (value >> space_breaks >>
+      (comma >> space_breaks >> right_bracket.absent? | right_bracket.present?))
+      .repeat
   end
 
   rule(:values_2_4, label: 'comma separated values (2-4)') do
     (value >> space_breaks >>
       (comma >> space_breaks >> right_paren.absent? | right_paren.present?))
       .repeat(2, 4)
+  end
+
+  rule(:array, label: 'array') do
+    (left_bracket >> space_breaks >> values >> right_bracket).as(:array)
   end
 
   rule(:matrix, label: 'matrix') do
@@ -78,6 +88,9 @@ class Parser < Parslet::Parser
   end
 
   rule(:comma, label: 'comma') { str(',') }
+
+  rule(:left_bracket, label: 'left bracket') { str('[') }
+  rule(:right_bracket, label: 'right bracket') { str(']') }
 
   rule(:left_paren, label: 'left parenthesis') { str('(') }
   rule(:right_paren, label: 'right parenthesis') { str(')') }
