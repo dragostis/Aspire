@@ -10,7 +10,7 @@ module ErrorHandler
   end
 
   def deepest(cause, depth = 0)
-    children = cause.children.reject { |child| too_deep? child }
+    children = cause.children
 
     if children.empty?
       [cause, depth + 1]
