@@ -7,6 +7,12 @@ describe Parser do
   let(:parser) { Parser.new }
 
   context 'values' do
+    it 'parses parenthesis-enclosed values' do
+      expect(parser.enclosed).to parse '(((2.3)))'
+      expect(parser.enclosed).to_not parse '()(1)'
+      expect(parser.enclosed).to_not parse ')1('
+    end
+
     it 'parses booleans' do
       expect(parser.boolean).to parse 'true'
       expect(parser.boolean).to parse 'false'
@@ -91,6 +97,7 @@ describe Parser do
       expect(parser.value).to parse '((0, 0), (0, 0))'
       expect(parser.value).to parse '[1]'
       expect(parser.value).to parse 'id3n_tifier'
+      expect(parser.value).to parse '((false))'
     end
   end
 

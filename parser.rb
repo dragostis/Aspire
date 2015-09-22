@@ -11,7 +11,12 @@ class Parser < Parslet::Parser
   root(:value)
 
   rule(:value, label: 'value') do
-    array | matrix | vector | color | float | integer | boolean | identifier
+    array | matrix | vector | color | float | integer | boolean | identifier |
+      enclosed
+  end
+
+  rule(:enclosed, label: 'parenthesis-enclosed value') do
+    left_paren >> space >> value >> space >> right_paren
   end
 
   rule(:values, label: 'comma separated values') do
