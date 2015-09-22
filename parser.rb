@@ -15,33 +15,30 @@ class Parser < Parslet::Parser
   end
 
   rule(:values, label: 'comma separated values') do
-    (value >> space_breaks >>
-      (comma >> space_breaks >> right_bracket.absent? | right_bracket.present?))
-      .repeat
+    (value >> space >>
+      (comma >> space >> right_bracket.absent? | right_bracket.present?)).repeat
   end
 
   rule(:values_2, label: 'comma separated values (min. 2)') do
-    (value >> space_breaks >>
-      (comma >> space_breaks >> right_paren.absent? | right_paren.present?))
-      .repeat(2)
+    (value >> space >>
+      (comma >> space >> right_paren.absent? | right_paren.present?)).repeat(2)
   end
 
   rule(:array, label: 'array') do
-    (left_bracket >> space_breaks >> values >> right_bracket).as(:array)
+    (left_bracket >> space >> values >> right_bracket).as(:array)
   end
 
   rule(:matrix, label: 'matrix') do
-    (left_paren >> space_breaks >> vectors_2 >> right_paren).as(:matrix)
+    (left_paren >> space >> vectors_2 >> right_paren).as(:matrix)
   end
 
   rule(:vectors_2, label: 'comma separated vectors (min. 2)') do
-    (vector >> space_breaks >>
-      (comma >> space_breaks >> right_paren.absent? | right_paren.present?))
-      .repeat(2)
+    (vector >> space >>
+      (comma >> space >> right_paren.absent? | right_paren.present?)).repeat(2)
   end
 
   rule(:vector, label: 'vector') do
-    (left_paren >> space_breaks >> values_2 >> right_paren).as(:vector)
+    (left_paren >> space >> values_2 >> right_paren).as(:vector)
   end
 
   rule(:identifier, label: 'identifier') do
@@ -82,10 +79,7 @@ class Parser < Parslet::Parser
 
   rule(:boolean, label: 'boolean') { (str('true') | str('false')).as(:boolean) }
 
-  rule(:space, label: 'optional space') { match['\s'].repeat }
-  rule(:space_breaks, label: 'optional space with breaks') do
-    match['\s\n'].repeat
-  end
+  rule(:space, label: 'optional space') { match['\s\n'].repeat }
 
   rule(:comma, label: 'comma') { str(',') }
 
