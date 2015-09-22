@@ -20,10 +20,10 @@ class Parser < Parslet::Parser
       .repeat
   end
 
-  rule(:values_2_4, label: 'comma separated values (2-4)') do
+  rule(:values_2, label: 'comma separated values (min. 2)') do
     (value >> space_breaks >>
       (comma >> space_breaks >> right_paren.absent? | right_paren.present?))
-      .repeat(2, 4)
+      .repeat(2)
   end
 
   rule(:array, label: 'array') do
@@ -31,17 +31,17 @@ class Parser < Parslet::Parser
   end
 
   rule(:matrix, label: 'matrix') do
-    (left_paren >> space_breaks >> vectors_2_4 >> right_paren).as(:matrix)
+    (left_paren >> space_breaks >> vectors_2 >> right_paren).as(:matrix)
   end
 
-  rule(:vectors_2_4, label: 'comma separated vectors (2-4)') do
+  rule(:vectors_2, label: 'comma separated vectors (min. 2)') do
     (vector >> space_breaks >>
       (comma >> space_breaks >> right_paren.absent? | right_paren.present?))
-      .repeat(2, 4)
+      .repeat(2)
   end
 
   rule(:vector, label: 'vector') do
-    (left_paren >> space_breaks >> values_2_4 >> right_paren).as(:vector)
+    (left_paren >> space_breaks >> values_2 >> right_paren).as(:vector)
   end
 
   rule(:identifier, label: 'identifier') do
