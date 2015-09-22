@@ -1,3 +1,4 @@
+require 'parslet'
 require 'parslet/rig/rspec'
 
 require_relative '../parser'
@@ -82,6 +83,31 @@ describe Parser do
       expect(value_parser).to parse('ev3ry_th1ng')
       expect(value_parser).to_not parse('')
       expect(value_parser).to_not parse('3n')
+    end
+  end
+
+  context 'errors' do
+    it 'finds leaf with highest depth' do
+      leaves = [[nil, 2], [nil, 1], [nil, 2], [nil, 0]]
+
+      expect(parser.deepest_leaves leaves).to eql [[nil, 2], [nil, 2]]
+    end
+
+    it 'finds the deepest, left-most cause' do
+      cause = Parslet::Cause.new(nil, nil, 0, [
+        Parslet::Cause.new(nil, nil, 0, [
+          Parslet::Cause.new(nil, nil, 0,
+                             [Parslet::Cause.new(nil, nil, 1, [])])
+        ]),
+        Parslet::Cause.new(nil, nil, 0, [
+          Parslet::Cause.new(nil, nil, 0,
+                             [Parslet::Cause.new(nil, nil, 1, [])]),
+          Parslet::Cause.new(nil, nil, 0,
+                             [Parslet::Cause.new(nil, nil, 2, [])])
+        ])
+      ])
+
+      expect(parser.deepest(cause)[0].pos).to eql 2
     end
   end
 end
