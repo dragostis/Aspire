@@ -7,6 +7,13 @@ describe Parser do
   let(:parser) { Parser.new }
 
   context 'values' do
+    it 'parses assignments' do
+      expect(parser.value).to parse 'a=0'
+      expect(parser.assignment).to parse 'b=3'
+      expect(parser.assignment).to parse "a \n = \n 3"
+      expect(parser.assignment).to parse 'arc=(3,3)'
+    end
+
     it 'parses parenthesis-enclosed values' do
       expect(parser.value).to parse '((false))'
       expect(parser.enclosed).to parse '(((2.3)))'

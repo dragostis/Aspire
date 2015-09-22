@@ -10,9 +10,13 @@ class Parser < Parslet::Parser
 
   root(:value)
 
+  rule(:assignment, label: 'assignment') do
+    (identifier >> space >> str('=') >> space >> value).as(:assignment)
+  end
+
   rule(:value, label: 'value') do
-    array | matrix | vector | color | float | integer | boolean | identifier |
-      enclosed
+    assignment | array | matrix | vector | color | float | integer | boolean |
+      identifier | enclosed
   end
 
   rule(:enclosed, label: 'parenthesis-enclosed value') do
