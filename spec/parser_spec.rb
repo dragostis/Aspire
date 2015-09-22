@@ -8,17 +8,20 @@ describe Parser do
 
   context 'values' do
     it 'parses parenthesis-enclosed values' do
+      expect(parser.value).to parse '((false))'
       expect(parser.enclosed).to parse '(((2.3)))'
       expect(parser.enclosed).to_not parse '()(1)'
       expect(parser.enclosed).to_not parse ')1('
     end
 
     it 'parses booleans' do
+      expect(parser.value).to parse 'true'
       expect(parser.boolean).to parse 'true'
       expect(parser.boolean).to parse 'false'
     end
 
     it 'parses integers' do
+      expect(parser.value).to parse '123'
       expect(parser.integer).to parse '0'
       expect(parser.integer).to parse '10'
       expect(parser.integer).to parse '1234567890'
@@ -28,6 +31,7 @@ describe Parser do
     end
 
     it 'parses floats' do
+      expect(parser.value).to parse '-0.0'
       expect(parser.float).to parse '0.'
       expect(parser.float).to parse '.0'
       expect(parser.float).to parse '1234567890.1234567890'
@@ -41,6 +45,7 @@ describe Parser do
     end
 
     it 'parses colors' do
+      expect(parser.value).to parse '#fff'
       expect(parser.color).to parse '#000'
       expect(parser.color).to parse '#000000'
       expect(parser.color).to parse '#fff'
@@ -53,6 +58,7 @@ describe Parser do
     end
 
     it 'parses vectors' do
+      expect(parser.value).to parse '(0, 0)'
       expect(parser.vector).to parse '(1,2)'
       expect(parser.vector).to parse '(1, 2, 3, 4)'
       expect(parser.vector).to parse "(\n1 \n, \n2 , \n3\n)"
@@ -64,6 +70,7 @@ describe Parser do
     end
 
     it 'parses matrices' do
+      expect(parser.value).to parse '((0, 0), (0, 0))'
       expect(parser.matrix).to parse '((1, 2), (3, 4))'
       expect(parser.matrix).to parse '((1, 2), (3, 4), (1, 2), (3, 4))'
       expect(parser.matrix).to parse "((\n1 \n, \n2 , \n3\n)\n, \n(4, 5))"
@@ -71,6 +78,7 @@ describe Parser do
     end
 
     it 'parses arrays' do
+      expect(parser.value).to parse '[1]'
       expect(parser.array).to parse '[]'
       expect(parser.array).to parse '[1]'
       expect(parser.array).to parse '[1, 2, 3, 4, 5]'
@@ -80,24 +88,13 @@ describe Parser do
     end
 
     it 'parses identifiers' do
+      expect(parser.value).to parse 'id3n_tifier'
       expect(parser.identifier).to parse 'camelCase'
       expect(parser.identifier).to parse 'snake_case'
       expect(parser.identifier).to parse 'numb3rs'
       expect(parser.identifier).to parse 'ev3ry_th1ng'
       expect(parser.identifier).to_not parse ''
       expect(parser.identifier).to_not parse '3n'
-    end
-
-    it 'parses values' do
-      expect(parser.value).to parse 'true'
-      expect(parser.value).to parse '123'
-      expect(parser.value).to parse '-0.0'
-      expect(parser.value).to parse '#fff'
-      expect(parser.value).to parse '(0, 0)'
-      expect(parser.value).to parse '((0, 0), (0, 0))'
-      expect(parser.value).to parse '[1]'
-      expect(parser.value).to parse 'id3n_tifier'
-      expect(parser.value).to parse '((false))'
     end
   end
 
