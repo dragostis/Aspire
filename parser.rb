@@ -10,13 +10,41 @@ class Parser < Parslet::Parser
 
   root(:value)
 
-  rule(:assignment, label: 'assignment') do
-    (identifier >> space >> str('=') >> space >> value).as(:assignment)
+  rule(:value, label: 'value') do
+    expression | non_expression
   end
 
-  rule(:value, label: 'value') do
+  rule(:non_expression, label: 'non-expression') do
     assignment | array | matrix | vector | color | float | integer | boolean |
       identifier | enclosed
+  end
+
+  rule(:expression, label: 'expression') { unary.as(:expression) }
+
+  rule(:unary, label: 'unary expression') do
+    ((sign | negation_op).as(:o) >> (float | integer).absent? >>
+      infix.as(:v)) | infix
+  end
+
+  rule(:infix, label: 'infix expression') do
+    infix_expression(
+      non_expression,
+      [or_op, 11],
+      [xor_op, 10],
+      [and_op, 9],
+      [bitwise_or_op, 8],
+      [bitwise_xor_op, 7],
+      [bitwise_and_op, 6],
+      [equality_op, 5],
+      [relational_op, 4],
+      [shift_op, 3],
+      [additive_op, 2],
+      [multiplicative_op, 1]
+    )
+  end
+
+  rule(:assignment, label: 'assignment') do
+    (identifier >> space >> str('=') >> space >> value).as(:assignment)
   end
 
   rule(:enclosed, label: 'parenthesis-enclosed value') do
@@ -87,6 +115,21 @@ class Parser < Parslet::Parser
   end
 
   rule(:boolean, label: 'boolean') { (str('true') | str('false')).as(:boolean) }
+
+  rule(:or_op, label: 'or operator') { str('||') }
+  rule(:xor_op, label: 'xor operator') { str('^^') }
+  rule(:and_op, label: 'and operator') { str('&&') }
+  rule(:bitwise_or_op, label: 'bitwise or operator') { str('|') }
+  rule(:bitwise_xor_op, label: 'bitwise xor operator') { str('^') }
+  rule(:bitwise_and_op, label: 'bitwise and operator') { str('&') }
+  rule(:equality_op, label: 'equality operator') { str('==') | str('!=') }
+  rule(:relational_op, label: 'relational operator') do
+    str('<=') | str('>=') | (str('<') | str('>')) >> match['<>'].absent?
+  end
+  rule(:shift_op, label: 'shift operator') { str('<<') | str('>>') }
+  rule(:multiplicative_op, label: 'multiplicative operator') { match['*/%'] }
+  rule(:additive_op, label: 'additive operator') { match['+-'] }
+  rule(:negation_op, label: 'negation operator') { str('!') }
 
   rule(:space, label: 'optional space') { match['\s\n'].repeat }
 
