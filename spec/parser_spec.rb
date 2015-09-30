@@ -160,6 +160,7 @@ describe Parser do
       expect(parser.float).to parse '1234567890.1234567890'
       expect(parser.float).to parse '-0.0'
       expect(parser.float).to parse '+0.0'
+      expect(parser.float).to parse '0.0e10'
       expect(parser.float).to parse '0.0e+10'
       expect(parser.float).to parse '0.0e-10'
       expect(parser.float).to parse '-0.0E-10'

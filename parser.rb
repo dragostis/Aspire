@@ -100,7 +100,7 @@ class Parser < Parslet::Parser
   end
 
   rule(:exponent, label: 'exponent') do
-    match['Ee'] >> sign >> (digit_19_digits | digit)
+    match['Ee'] >> sign.maybe >> (digit_19_digits | digit)
   end
 
   rule(:integer, label: 'integer') do
