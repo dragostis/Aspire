@@ -168,7 +168,7 @@ describe Parser do
     end
 
     it 'parses colors' do
-      expect(parser.value).to parse '#fff'
+      expect(parser.value).to parse '#ffffff'
       expect(parser.color).to parse '#000'
       expect(parser.color).to parse '#000000'
       expect(parser.color).to parse '#fff'

@@ -83,7 +83,7 @@ class Parser < Parslet::Parser
   end
 
   rule(:color, label: 'color') do
-    (str('#') >> (color_12bit | color_24bit >> alpha.maybe)).as(:color)
+    (str('#') >> (color_24bit >> alpha.maybe | color_12bit)).as(:color)
   end
 
   rule(:color_24bit, label: '24-bit color') { hex_digit.repeat(6, 6) }
