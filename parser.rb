@@ -2,8 +2,8 @@ require 'parslet'
 
 require_relative 'error_handler'
 
-# This class contains all the rules from the Aspire language. It it used to
-# parse a string into a specialized hash and returning meaningful errors in case
+# This class contains all the rules from the Aspire language. It is used to
+# parse a string into a specialized hash and return meaningful errors in case
 # that fails.
 class Parser < Parslet::Parser
   include ErrorHandler
