@@ -120,6 +120,11 @@ describe Parser do
       expect(parser.unary).to parse 'a||b'
       expect(parser.infix).to parse 'a||b'
     end
+
+    it 'parses complex expressions' do
+      expect(parser.expression).to parse(
+        '(1, 2)*[]+2>>0.3e+10&((1,1),(1,1))^(1+2)|true&&a_3^^#000000||a')
+    end
   end
 
   context 'non-expressions' do
