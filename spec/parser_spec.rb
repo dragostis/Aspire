@@ -22,6 +22,7 @@ describe Parser do
 
     it 'parses functions' do
       expect(parser.function).to parse 'f(){}'
+      expect(parser.function.parse 'f(){}').to have_key :function
       expect(parser.function).to parse 'f(a){b}'
       expect(parser.function).to parse 'f(a,b){b;b}'
     end
@@ -37,8 +38,8 @@ describe Parser do
       expect(parser.expression).to parse '-a'
       expect(parser.unary).to parse '-a'
       expect(parser.unary).to parse '+a'
-      expect(parser.unary.parse '!a').to have_key :o
-      expect(parser.unary.parse '-3').to_not have_key :o
+      expect(parser.unary.parse('!a')[:expression]).to have_key :o
+      expect(parser.unary.parse('-3')).to_not have_key :o
     end
 
     it 'parses multiplications' do
@@ -49,7 +50,7 @@ describe Parser do
       expect(parser.infix).to parse 'a/b'
       expect(parser.infix).to parse 'a%b'
       expect(parser.infix).to parse 'a*b+c'
-      expect(parser.infix.parse('a*b+c')[:o].to_s).to eql '*'
+      expect(parser.infix.parse('a*b+c')[:expression][:o].to_s).to eql '*'
     end
 
     it 'parses additions' do
@@ -59,7 +60,7 @@ describe Parser do
       expect(parser.infix).to parse "a \n+ \nb"
       expect(parser.infix).to parse 'a-b'
       expect(parser.infix).to parse 'a+b>>c'
-      expect(parser.infix.parse('a+b>>c')[:o].to_s).to eql '+'
+      expect(parser.infix.parse('a+b>>c')[:expression][:o].to_s).to eql '+'
     end
 
     it 'parses shifts' do
@@ -69,7 +70,7 @@ describe Parser do
       expect(parser.infix).to parse "a \n>> \nb"
       expect(parser.infix).to parse 'a<<b'
       expect(parser.infix).to parse 'a>>b>c'
-      expect(parser.infix.parse('a>>b>c')[:o].to_s).to eql '>>'
+      expect(parser.infix.parse('a>>b>c')[:expression][:o].to_s).to eql '>>'
     end
 
     it 'parses relations' do
@@ -81,7 +82,7 @@ describe Parser do
       expect(parser.infix).to parse 'a<=b'
       expect(parser.infix).to parse 'a>=b'
       expect(parser.infix).to parse 'a<b==c'
-      expect(parser.infix.parse('a<b==c')[:o].to_s).to eql '<'
+      expect(parser.infix.parse('a<b==c')[:expression][:o].to_s).to eql '<'
     end
 
     it 'parses equalities' do
@@ -91,7 +92,7 @@ describe Parser do
       expect(parser.infix).to parse "a \n== \nb"
       expect(parser.infix).to parse 'a!=b'
       expect(parser.infix).to parse 'a==b&c'
-      expect(parser.infix.parse('a==b&c')[:o].to_s).to eql '=='
+      expect(parser.infix.parse('a==b&c')[:expression][:o].to_s).to eql '=='
     end
 
     it 'parses bitwise ands' do
@@ -100,7 +101,7 @@ describe Parser do
       expect(parser.unary).to parse 'a&b'
       expect(parser.infix).to parse "a \n& \nb"
       expect(parser.infix).to parse 'a&b^c'
-      expect(parser.infix.parse('a&b^c')[:o].to_s).to eql '&'
+      expect(parser.infix.parse('a&b^c')[:expression][:o].to_s).to eql '&'
     end
 
     it 'parses bitwise xors' do
@@ -109,7 +110,7 @@ describe Parser do
       expect(parser.unary).to parse 'a^b'
       expect(parser.infix).to parse "a \n^ \nb"
       expect(parser.infix).to parse 'a^b|c'
-      expect(parser.infix.parse('a^b|c')[:o].to_s).to eql '^'
+      expect(parser.infix.parse('a^b|c')[:expression][:o].to_s).to eql '^'
     end
 
     it 'parses bitwise ors' do
@@ -118,7 +119,7 @@ describe Parser do
       expect(parser.unary).to parse 'a|b'
       expect(parser.infix).to parse "a \n| \nb"
       expect(parser.infix).to parse 'a|b&&c'
-      expect(parser.infix.parse('a|b&&c')[:o].to_s).to eql '|'
+      expect(parser.infix.parse('a|b&&c')[:expression][:o].to_s).to eql '|'
     end
 
     it 'parses ands' do
@@ -127,7 +128,7 @@ describe Parser do
       expect(parser.unary).to parse 'a&&b'
       expect(parser.infix).to parse "a \n&& \nb"
       expect(parser.infix).to parse 'a&&b^^c'
-      expect(parser.infix.parse('a&&b^^c')[:o].to_s).to eql '&&'
+      expect(parser.infix.parse('a&&b^^c')[:expression][:o].to_s).to eql '&&'
     end
 
     it 'parses xors' do
@@ -136,7 +137,7 @@ describe Parser do
       expect(parser.unary).to parse 'a^^b'
       expect(parser.infix).to parse "a \n^^ \nb"
       expect(parser.infix).to parse 'a^^b||c'
-      expect(parser.infix.parse('a^^b||c')[:o].to_s).to eql '^^'
+      expect(parser.infix.parse('a^^b||c')[:expression][:o].to_s).to eql '^^'
     end
 
     it 'parses ors' do
@@ -155,6 +156,7 @@ describe Parser do
   context 'non-expressions' do
     it 'parses assignments' do
       expect(parser.value).to parse 'a=0'
+      expect(parser.value.parse 'a=0').to have_key :assignment
       expect(parser.assignment).to parse 'b=3'
       expect(parser.assignment).to parse "a \n = \n 3"
       expect(parser.assignment).to parse 'arc=(3,3)'
@@ -169,12 +171,14 @@ describe Parser do
 
     it 'parses booleans' do
       expect(parser.value).to parse 'true'
+      expect(parser.value.parse 'true').to have_key :boolean
       expect(parser.boolean).to parse 'true'
       expect(parser.boolean).to parse 'false'
     end
 
     it 'parses integers' do
       expect(parser.value).to parse '123'
+      expect(parser.value.parse '123').to have_key :integer
       expect(parser.integer).to parse '0'
       expect(parser.integer).to parse '10'
       expect(parser.integer).to parse '1234567890'
@@ -185,6 +189,7 @@ describe Parser do
 
     it 'parses floats' do
       expect(parser.value).to parse '-0.0'
+      expect(parser.value.parse '-0.0').to have_key :float
       expect(parser.float).to parse '0.'
       expect(parser.float).to parse '.0'
       expect(parser.float).to parse '1234567890.1234567890'
@@ -200,6 +205,7 @@ describe Parser do
 
     it 'parses colors' do
       expect(parser.value).to parse '#ffffff'
+      expect(parser.value.parse '#ffffff').to have_key :color
       expect(parser.color).to parse '#000'
       expect(parser.color).to parse '#000000'
       expect(parser.color).to parse '#fff'
@@ -213,6 +219,7 @@ describe Parser do
 
     it 'parses vectors' do
       expect(parser.value).to parse '(0, 0)'
+      expect(parser.value.parse '(0, 0)').to have_key :vector
       expect(parser.vector).to parse '(1,2)'
       expect(parser.vector).to parse '(1, 2, 3, 4)'
       expect(parser.vector).to parse "(\n1 \n, \n2 , \n3\n)"
@@ -226,6 +233,7 @@ describe Parser do
 
     it 'parses matrices' do
       expect(parser.value).to parse '((0, 0), (0, 0))'
+      expect(parser.value.parse '((0, 0), (0, 0))').to have_key :matrix
       expect(parser.matrix).to parse '((1, 2), (3, 4))'
       expect(parser.matrix).to parse '((1, 2), (3, 4), (1, 2), (3, 4))'
       expect(parser.matrix).to parse "((\n1 \n, \n2 , \n3\n)\n, \n(4, 5))"
@@ -235,6 +243,7 @@ describe Parser do
 
     it 'parses arrays' do
       expect(parser.value).to parse '[1]'
+      expect(parser.value.parse '[1]').to have_key :array
       expect(parser.array).to parse '[]'
       expect(parser.array).to parse '[1]'
       expect(parser.array).to parse '[1, 2, 3, 4, 5]'
@@ -246,6 +255,7 @@ describe Parser do
 
     it 'parses identifiers' do
       expect(parser.value).to parse 'id3n_tifier'
+      expect(parser.value.parse 'i').to have_key :identifier
       expect(parser.identifier).to parse 'camelCase'
       expect(parser.identifier).to parse 'snake_case'
       expect(parser.identifier).to parse 'numb3rs'

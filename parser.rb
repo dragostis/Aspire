@@ -15,7 +15,7 @@ class Parser < Parslet::Parser
   end
 
   rule(:function, label: 'function') do
-    signature >> space >> block
+    (signature >> space >> block).as(:function)
   end
 
   rule(:signature, label: 'function signature') do
@@ -46,14 +46,15 @@ class Parser < Parslet::Parser
       identifier | enclosed
   end
 
-  rule(:expression, label: 'expression') { unary.as(:expression) }
+  rule(:expression, label: 'expression') { unary }
 
   rule(:unary, label: 'unary expression') do
     ((sign | negation_op).as(:o) >> (float | integer).absent? >>
-      infix.as(:v)) | infix
+      infix.as(:v)).as(:expression) | infix
   end
 
   rule(:infix, label: 'infix expression') do
+    (non_expression >> space >> op).present? >>
     infix_expression(
       space >> non_expression >> space,
       [or_op, 11],
@@ -67,7 +68,7 @@ class Parser < Parslet::Parser
       [shift_op, 3],
       [additive_op, 2],
       [multiplicative_op, 1]
-    )
+    ).as(:expression) | non_expression
   end
 
   rule(:assignment, label: 'assignment') do
@@ -140,6 +141,10 @@ class Parser < Parslet::Parser
 
   rule(:boolean, label: 'boolean') { (str('true') | str('false')).as(:boolean) }
 
+  rule(:op, label: 'infix operator') do
+    or_op | xor_op | and_op | bitwise_or_op | bitwise_xor_op | bitwise_and_op |
+      equality_op | shift_op | relational_op | additive_op | multiplicative_op
+  end
   rule(:or_op, label: 'or operator') { str('||') }
   rule(:xor_op, label: 'xor operator') { str('^^') }
   rule(:and_op, label: 'and operator') { str('&&') }
