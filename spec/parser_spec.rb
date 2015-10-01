@@ -6,6 +6,31 @@ require_relative '../parser'
 describe Parser do
   let(:parser) { Parser.new }
 
+  context 'functions' do
+    it 'parses blocks' do
+      expect(parser.block).to parse '{3;4;5}'
+      expect(parser.block).to parse "{\n3\n4;5\n}"
+    end
+
+    it 'parses signatured' do
+      expect(parser.signature).to parse 'f()'
+      expect(parser.signature).to parse 'f(a)'
+      expect(parser.signature).to parse "f \n( \n a, a \n)"
+      expect(parser.signature).to_not parse 'f(1)'
+      expect(parser.signature).to_not parse 'f(a,)'
+    end
+
+    it 'parses functions' do
+      expect(parser.function).to parse 'f(){}'
+      expect(parser.function).to parse 'f(a){b}'
+      expect(parser.function).to parse 'f(a,b){b;b}'
+    end
+
+    it 'parses multiple functions' do
+      expect(parser.functions).to parse 'f(){}g(){}'
+    end
+  end
+
   context 'expressions' do
     it 'parses unary expressions' do
       expect(parser.value).to parse '-a'

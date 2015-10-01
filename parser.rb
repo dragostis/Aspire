@@ -10,6 +10,33 @@ class Parser < Parslet::Parser
 
   root(:value)
 
+  rule(:functions, label: 'functions') do
+    repeat_separated function, space, spaced: false
+  end
+
+  rule(:function, label: 'function') do
+    signature >> space >> block
+  end
+
+  rule(:signature, label: 'function signature') do
+    identifier.as(:name) >> space >> left_paren >> identifiers.as(:args) >>
+      right_paren
+  end
+
+  rule(:identifiers, label: 'identifiers') do
+    repeat_separated identifier, comma
+  end
+
+  rule(:block, label: 'function block') do
+    (left_brace >> space >> statements >> space >> right_brace).as(:block)
+  end
+
+  rule(:statements, label: 'statements') do
+    repeat_separated value, (
+      (unbreakable_space >> new_line >> space) | (space >> semicolon >> space)
+    ), spaced: false
+  end
+
   rule(:value, label: 'value') do
     expression | non_expression
   end
@@ -52,26 +79,23 @@ class Parser < Parslet::Parser
   end
 
   rule(:values, label: 'comma separated values') do
-    (value >> space >>
-      (comma >> space >> right_bracket.absent? | right_bracket.present?)).repeat
+    repeat_separated value, comma
   end
 
   rule(:values_2, label: 'comma separated values (min. 2)') do
-    (value >> space >>
-      (comma >> space >> right_paren.absent? | right_paren.present?)).repeat(2)
+    repeat_separated value, comma, min: 2
   end
 
   rule(:array, label: 'array') do
-    (left_bracket >> space >> values >> right_bracket).as(:array)
+    (left_bracket >> values >> right_bracket).as(:array)
   end
 
   rule(:matrix, label: 'matrix') do
-    (left_paren >> space >> vectors_2 >> right_paren).as(:matrix)
+    (left_paren >> vectors_2 >> right_paren).as(:matrix)
   end
 
   rule(:vectors_2, label: 'comma separated vectors (min. 2)') do
-    (vector >> space >>
-      (comma >> space >> right_paren.absent? | right_paren.present?)).repeat(2)
+    repeat_separated vector, comma, min: 2
   end
 
   rule(:vector, label: 'vector') do
@@ -131,9 +155,17 @@ class Parser < Parslet::Parser
   rule(:additive_op, label: 'additive operator') { match['+-'] }
   rule(:negation_op, label: 'negation operator') { str('!') }
 
-  rule(:space, label: 'optional space') { match['\s\n'].repeat }
+  rule(:space, label: 'optional space') { match['\s'].repeat }
+  rule(:unbreakable_space, label: 'optional unbreakable space') do
+    str(' ').repeat
+  end
+  rule(:new_line, label: 'new live') { str("\n") }
 
   rule(:comma, label: 'comma') { str(',') }
+  rule(:semicolon, label: 'semicolon') { str(';') }
+
+  rule(:left_brace, label: 'left brace') { str('{') }
+  rule(:right_brace, label: 'right brace') { str('}') }
 
   rule(:left_bracket, label: 'left bracket') { str('[') }
   rule(:right_bracket, label: 'right bracket') { str(']') }
@@ -154,4 +186,12 @@ class Parser < Parslet::Parser
   rule(:decimal_point, label: 'decimal point') { str('.') }
 
   rule(:sign, label: 'sign') { match['+-'] }
+
+  def repeat_separated(value, separator, spaced: true, min: 0)
+    separator = space >> separator >> space if spaced
+
+    rule = (value >> (separator >> value.present?).maybe).repeat min
+
+    spaced ? space >> rule >> space : rule
+  end
 end
