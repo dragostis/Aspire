@@ -45,7 +45,7 @@ describe Parser do
       expect(parser.value).to parse '1*(1, 2)'
       expect(parser.expression).to parse 'a*b'
       expect(parser.unary).to parse 'a*b'
-      expect(parser.infix).to parse 'a*b'
+      expect(parser.infix).to parse "a \n* \nb"
       expect(parser.infix).to parse 'a/b'
       expect(parser.infix).to parse 'a%b'
       expect(parser.infix).to parse 'a*b+c'
@@ -56,7 +56,7 @@ describe Parser do
       expect(parser.value).to parse '1+(1, 2)'
       expect(parser.expression).to parse 'a+b'
       expect(parser.unary).to parse 'a+b'
-      expect(parser.infix).to parse 'a+b'
+      expect(parser.infix).to parse "a \n+ \nb"
       expect(parser.infix).to parse 'a-b'
       expect(parser.infix).to parse 'a+b>>c'
       expect(parser.infix.parse('a+b>>c')[:o].to_s).to eql '+'
@@ -66,7 +66,7 @@ describe Parser do
       expect(parser.value).to parse '1>>(1, 2)'
       expect(parser.expression).to parse 'a>>b'
       expect(parser.unary).to parse 'a>>b'
-      expect(parser.infix).to parse 'a>>b'
+      expect(parser.infix).to parse "a \n>> \nb"
       expect(parser.infix).to parse 'a<<b'
       expect(parser.infix).to parse 'a>>b>c'
       expect(parser.infix.parse('a>>b>c')[:o].to_s).to eql '>>'
@@ -76,7 +76,7 @@ describe Parser do
       expect(parser.value).to parse '1<(1, 2)'
       expect(parser.expression).to parse 'a<b'
       expect(parser.unary).to parse 'a<b'
-      expect(parser.infix).to parse 'a<b'
+      expect(parser.infix).to parse "a \n< \nb"
       expect(parser.infix).to parse 'a>b'
       expect(parser.infix).to parse 'a<=b'
       expect(parser.infix).to parse 'a>=b'
@@ -88,7 +88,7 @@ describe Parser do
       expect(parser.value).to parse '1==(1, 2)'
       expect(parser.expression).to parse 'a==b'
       expect(parser.unary).to parse 'a==b'
-      expect(parser.infix).to parse 'a==b'
+      expect(parser.infix).to parse "a \n== \nb"
       expect(parser.infix).to parse 'a!=b'
       expect(parser.infix).to parse 'a==b&c'
       expect(parser.infix.parse('a==b&c')[:o].to_s).to eql '=='
@@ -98,7 +98,7 @@ describe Parser do
       expect(parser.value).to parse '1&(1, 2)'
       expect(parser.expression).to parse 'a&b'
       expect(parser.unary).to parse 'a&b'
-      expect(parser.infix).to parse 'a&b'
+      expect(parser.infix).to parse "a \n& \nb"
       expect(parser.infix).to parse 'a&b^c'
       expect(parser.infix.parse('a&b^c')[:o].to_s).to eql '&'
     end
@@ -107,7 +107,7 @@ describe Parser do
       expect(parser.value).to parse '1^(1, 2)'
       expect(parser.expression).to parse 'a^b'
       expect(parser.unary).to parse 'a^b'
-      expect(parser.infix).to parse 'a^b'
+      expect(parser.infix).to parse "a \n^ \nb"
       expect(parser.infix).to parse 'a^b|c'
       expect(parser.infix.parse('a^b|c')[:o].to_s).to eql '^'
     end
@@ -116,7 +116,7 @@ describe Parser do
       expect(parser.value).to parse '1|(1, 2)'
       expect(parser.expression).to parse 'a|b'
       expect(parser.unary).to parse 'a|b'
-      expect(parser.infix).to parse 'a|b'
+      expect(parser.infix).to parse "a \n| \nb"
       expect(parser.infix).to parse 'a|b&&c'
       expect(parser.infix.parse('a|b&&c')[:o].to_s).to eql '|'
     end
@@ -125,7 +125,7 @@ describe Parser do
       expect(parser.value).to parse '1&&(1, 2)'
       expect(parser.expression).to parse 'a&&b'
       expect(parser.unary).to parse 'a&&b'
-      expect(parser.infix).to parse 'a&&b'
+      expect(parser.infix).to parse "a \n&& \nb"
       expect(parser.infix).to parse 'a&&b^^c'
       expect(parser.infix.parse('a&&b^^c')[:o].to_s).to eql '&&'
     end
@@ -134,7 +134,7 @@ describe Parser do
       expect(parser.value).to parse '1^^(1, 2)'
       expect(parser.expression).to parse 'a^^b'
       expect(parser.unary).to parse 'a^^b'
-      expect(parser.infix).to parse 'a^^b'
+      expect(parser.infix).to parse "a \n^^ \nb"
       expect(parser.infix).to parse 'a^^b||c'
       expect(parser.infix.parse('a^^b||c')[:o].to_s).to eql '^^'
     end
@@ -143,7 +143,7 @@ describe Parser do
       expect(parser.value).to parse '1||(1, 2)'
       expect(parser.expression).to parse 'a||b'
       expect(parser.unary).to parse 'a||b'
-      expect(parser.infix).to parse 'a||b'
+      expect(parser.infix).to parse "a \n|| \nb"
     end
 
     it 'parses complex expressions' do

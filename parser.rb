@@ -8,7 +8,7 @@ require_relative 'error_handler'
 class Parser < Parslet::Parser
   include ErrorHandler
 
-  root(:value)
+  root(:functions)
 
   rule(:functions, label: 'functions') do
     repeat_separated function, space, spaced: false
@@ -55,7 +55,7 @@ class Parser < Parslet::Parser
 
   rule(:infix, label: 'infix expression') do
     infix_expression(
-      non_expression,
+      space >> non_expression >> space,
       [or_op, 11],
       [xor_op, 10],
       [and_op, 9],
