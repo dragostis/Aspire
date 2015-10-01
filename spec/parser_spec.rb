@@ -196,6 +196,7 @@ describe Parser do
       expect(parser.vector).to parse '(hey, ya)'
       expect(parser.vector).to_not parse '(1)'
       expect(parser.vector).to_not parse '(#fff)'
+      expect(parser.vector).to_not parse '(1,)'
     end
 
     it 'parses matrices' do
@@ -204,6 +205,7 @@ describe Parser do
       expect(parser.matrix).to parse '((1, 2), (3, 4), (1, 2), (3, 4))'
       expect(parser.matrix).to parse "((\n1 \n, \n2 , \n3\n)\n, \n(4, 5))"
       expect(parser.matrix).to_not parse '((1, 2))'
+      expect(parser.matrix).to_not parse '((1, 2),)'
     end
 
     it 'parses arrays' do
@@ -214,6 +216,7 @@ describe Parser do
       expect(parser.array).to parse "[\n1 \n, \n2 , \n3\n]"
       expect(parser.array).to parse '[((1, 2), (3, 4))]'
       expect(parser.array).to parse '[[]]'
+      expect(parser.array).to_not parse '[1,]'
     end
 
     it 'parses identifiers' do
