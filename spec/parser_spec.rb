@@ -190,6 +190,7 @@ describe Parser do
 
   context 'non-expressions' do
     it 'parses blocks' do
+      expect(parser.value).to_not parse '{1a}'
       expect(parser.value).to parse '{1}'
       expect(parser.value.parse '{1}').to have_key :block
       expect(parser.block).to parse '{}'
@@ -197,6 +198,7 @@ describe Parser do
       expect(parser.value).to parse '{if(1){}}'
       expect(parser.value).to parse '{if(1){}else{}}'
       expect(parser.value).to parse "{\n 1 \n 1 \n }"
+      expect(parser.value).to_not parse '{1a}'
     end
 
     it 'parses assignments' do

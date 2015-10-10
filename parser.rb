@@ -210,11 +210,14 @@ class Parser < Parslet::Parser
 
   rule(:sign, label: 'sign') { match['+-'] }
 
+  def wrap_spaces(value, spaced)
+    spaced ? space >> value >> space : value
+  end
+
   def repeat_separated(value, separator, spaced: true, min: 0)
-    separator = space >> separator >> space if spaced
+    rule = (value >> (wrap_spaces(separator, spaced) >> value)
+           .repeat([min - 1, 0].max)).repeat([min, 1].min, 1)
 
-    rule = (value >> (separator >> value.present?).maybe).repeat min
-
-    spaced ? space >> rule >> space : rule
+    wrap_spaces(rule, spaced)
   end
 end
