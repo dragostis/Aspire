@@ -7,37 +7,37 @@ describe Parser do
   let(:parser) { Parser.new }
 
   context 'statements' do
-    it 'parses values' do
-      expect(parser.statement).to parse '1+1'
-      expect(parser.statement).to parse '{1;1}'
-      expect(parser.statement).to parse 'a=1'
-      expect(parser.statement).to parse '[1]'
-      expect(parser.statement).to parse '((1,2),(3,4))'
-      expect(parser.statement).to parse '(1,2)'
-      expect(parser.statement).to parse '#fff'
-      expect(parser.statement).to parse '0.0'
-      expect(parser.statement).to parse '0'
-      expect(parser.statement).to parse 'true'
-      expect(parser.statement).to parse 'a_3'
-      expect(parser.statement).to parse '(1)'
+    it 'parses expressions and non-expressions' do
+      expect(parser.value).to parse '1+1'
+      expect(parser.value).to parse '{1;1}'
+      expect(parser.value).to parse 'a=1'
+      expect(parser.value).to parse '[1]'
+      expect(parser.value).to parse '((1,2),(3,4))'
+      expect(parser.value).to parse '(1,2)'
+      expect(parser.value).to parse '#fff'
+      expect(parser.value).to parse '0.0'
+      expect(parser.value).to parse '0'
+      expect(parser.value).to parse 'true'
+      expect(parser.value).to parse 'a_3'
+      expect(parser.value).to parse '(1)'
     end
 
     it 'parses if statements' do
-      expect(parser.statement).to parse 'if(1){}'
+      expect(parser.value).to parse 'if(1){}'
       expect(parser.if_statement).to parse 'if(1){}'
       expect(parser.if_statement).to parse "if \n(1)\n {}"
       expect(parser.if_statement).to_not parse 'if(1,1){}'
     end
 
     it 'parses if-else statements' do
-      expect(parser.statement).to parse 'if(1){}else{}'
+      expect(parser.value).to parse 'if(1){}else{}'
       expect(parser.if_else_statement).to parse 'if(1){}else{}'
       expect(parser.if_else_statement).to parse "if \n (1) \n{} \nelse \n{}"
       expect(parser.if_else_statement).to_not parse 'if(1,1){}else{}'
     end
 
     it 'parses for statements' do
-      expect(parser.statement).to parse 'for(a:a){}'
+      expect(parser.value).to parse 'for(a:a){}'
       expect(parser.for_statement).to parse 'for(a:a){}'
       expect(parser.for_statement).to parse "for \n(\n a\n :\n a\n )\n {}"
       expect(parser.for_statement).to parse 'for(a:[]){}'
@@ -205,6 +205,9 @@ describe Parser do
       expect(parser.assignment).to parse 'b=3'
       expect(parser.assignment).to parse "a \n = \n 3"
       expect(parser.assignment).to parse 'arc=(3,3)'
+      expect(parser.assignment).to parse 'arc = {1;2}'
+      expect(parser.assignment).to parse 'arc = if (1) {} else {}'
+      expect(parser.assignment).to parse 'arc = for (a : ar) {a + 1}'
     end
 
     it 'parses parenthesis-enclosed values' do

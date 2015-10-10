@@ -49,17 +49,14 @@ class Parser < Parslet::Parser
   end
 
   rule(:statements, label: 'statements') do
-    repeat_separated statement, (
+    repeat_separated value, (
       (unbreakable_space >> new_line >> space) | (space >> semicolon >> space)
     ), spaced: false
   end
 
-  rule(:statement, label: 'statement') do
-    for_statement | if_else_statement | if_statement | value
-  end
-
   rule(:value, label: 'value') do
-    expression | non_expression
+    for_statement | if_else_statement | if_statement | expression |
+      non_expression
   end
 
   rule(:non_expression, label: 'non-expression') do
