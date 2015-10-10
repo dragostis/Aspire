@@ -6,6 +6,37 @@ require_relative '../parser'
 describe Parser do
   let(:parser) { Parser.new }
 
+  context 'statements' do
+    it 'parses values' do
+      expect(parser.statement).to parse '1+1'
+      expect(parser.statement).to parse '{1;1}'
+      expect(parser.statement).to parse 'a=1'
+      expect(parser.statement).to parse '[1]'
+      expect(parser.statement).to parse '((1,2),(3,4))'
+      expect(parser.statement).to parse '(1,2)'
+      expect(parser.statement).to parse '#fff'
+      expect(parser.statement).to parse '0.0'
+      expect(parser.statement).to parse '0'
+      expect(parser.statement).to parse 'true'
+      expect(parser.statement).to parse 'a_3'
+      expect(parser.statement).to parse '(1)'
+    end
+
+    it 'parses if statements' do
+      expect(parser.statement).to parse 'if(1){}'
+      expect(parser.if_statement).to parse 'if(1){}'
+      expect(parser.if_statement).to parse "if \n(1)\n {}"
+      expect(parser.if_statement).to_not parse 'if(1,1){}'
+    end
+
+    it 'parses if-else statements' do
+      expect(parser.statement).to parse 'if(1){}else{}'
+      expect(parser.if_else_statement).to parse 'if(1){}else{}'
+      expect(parser.if_else_statement).to parse "if \n (1) \n{} \nelse \n{}"
+      expect(parser.if_else_statement).to_not parse 'if(1,1){}else{}'
+    end
+  end
+
   context 'functions' do
     it 'parses signatured' do
       expect(parser.signature).to parse 'f()'
@@ -154,6 +185,8 @@ describe Parser do
       expect(parser.value.parse '{1}').to have_key :block
       expect(parser.block).to parse '{}'
       expect(parser.value).to parse '{1;1}'
+      expect(parser.value).to parse '{if(1){}}'
+      expect(parser.value).to parse '{if(1){}else{}}'
       expect(parser.value).to parse "{\n 1 \n 1 \n }"
     end
 

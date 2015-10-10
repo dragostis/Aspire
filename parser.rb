@@ -27,14 +27,29 @@ class Parser < Parslet::Parser
     repeat_separated identifier, comma
   end
 
+  rule(:if_statement, label: 'if statement') do
+    (str('if') >> space >> left_paren >> value.as(:condition) >> space >>
+      right_paren >> space >> block).as(:if_block)
+  end
+
+  rule(:if_else_statement, label: 'if-else statement') do
+    (str('if') >> space >> left_paren >> value.as(:condition) >> space >>
+      right_paren >> space >> block.as(:if_block) >> space >> str('else') >>
+      space >> block.as(:else_block)).as(:if_else_statement)
+  end
+
   rule(:block, label: 'function block') do
     (left_brace >> space >> statements >> space >> right_brace).as(:block)
   end
 
   rule(:statements, label: 'statements') do
-    repeat_separated value, (
+    repeat_separated statement, (
       (unbreakable_space >> new_line >> space) | (space >> semicolon >> space)
     ), spaced: false
+  end
+
+  rule(:statement, label: 'statement') do
+    if_else_statement | if_statement | value
   end
 
   rule(:value, label: 'value') do
