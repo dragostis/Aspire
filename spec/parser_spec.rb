@@ -35,6 +35,15 @@ describe Parser do
       expect(parser.if_else_statement).to parse "if \n (1) \n{} \nelse \n{}"
       expect(parser.if_else_statement).to_not parse 'if(1,1){}else{}'
     end
+
+    it 'parses for statements' do
+      expect(parser.statement).to parse 'for(a:a){}'
+      expect(parser.for_statement).to parse 'for(a:a){}'
+      expect(parser.for_statement).to parse "for \n(\n a\n :\n a\n )\n {}"
+      expect(parser.for_statement).to parse 'for(a:[]){}'
+      expect(parser.for_statement).to_not parse 'for(a:1){}'
+      expect(parser.for_statement).to_not parse 'for(1:[]){}'
+    end
   end
 
   context 'functions' do

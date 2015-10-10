@@ -27,6 +27,12 @@ class Parser < Parslet::Parser
     repeat_separated identifier, comma
   end
 
+  rule(:for_statement, label: 'for statement') do
+    (str('for') >> space >> left_paren >> space >> identifier.as(:element) >>
+      space >> str(':') >> space >> (identifier | array).as(:array) >> space >>
+      right_paren >> space >> block).as(:for_statement)
+  end
+
   rule(:if_statement, label: 'if statement') do
     (str('if') >> space >> left_paren >> value.as(:condition) >> space >>
       right_paren >> space >> block).as(:if_block)
@@ -49,7 +55,7 @@ class Parser < Parslet::Parser
   end
 
   rule(:statement, label: 'statement') do
-    if_else_statement | if_statement | value
+    for_statement | if_else_statement | if_statement | value
   end
 
   rule(:value, label: 'value') do
