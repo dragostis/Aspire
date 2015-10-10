@@ -7,11 +7,6 @@ describe Parser do
   let(:parser) { Parser.new }
 
   context 'functions' do
-    it 'parses blocks' do
-      expect(parser.block).to parse '{3;4;5}'
-      expect(parser.block).to parse "{\n3\n4;5\n}"
-    end
-
     it 'parses signatured' do
       expect(parser.signature).to parse 'f()'
       expect(parser.signature).to parse 'f(a)'
@@ -154,6 +149,14 @@ describe Parser do
   end
 
   context 'non-expressions' do
+    it 'parses blocks' do
+      expect(parser.value).to parse '{1}'
+      expect(parser.value.parse '{1}').to have_key :block
+      expect(parser.block).to parse '{}'
+      expect(parser.value).to parse '{1;1}'
+      expect(parser.value).to parse "{\n 1 \n 1 \n }"
+    end
+
     it 'parses assignments' do
       expect(parser.value).to parse 'a=0'
       expect(parser.value.parse 'a=0').to have_key :assignment

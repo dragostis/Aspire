@@ -42,8 +42,8 @@ class Parser < Parslet::Parser
   end
 
   rule(:non_expression, label: 'non-expression') do
-    assignment | array | matrix | vector | color | float | integer | boolean |
-      identifier | enclosed
+    block | assignment | array | matrix | vector | color | float | integer |
+      boolean | identifier | enclosed
   end
 
   rule(:expression, label: 'expression') { unary }
