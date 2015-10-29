@@ -21,8 +21,8 @@ module ErrorHandler
     end
   end
 
-  def parse(*args)
-    super(*args)
+  def parse(string)
+    super string, reporter: Parslet::ErrorReporter::Contextual.new
   rescue Parslet::ParseFailed => error
     deepest(error.cause)[0].raise
   end
