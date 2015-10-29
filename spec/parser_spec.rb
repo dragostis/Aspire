@@ -212,6 +212,11 @@ describe Parser do
       expect(parser.assignment).to parse 'arc = if (1) {} else {}'
       expect(parser.assignment).to parse 'arc = for (a : ar) {a + 1}'
       expect(parser.assignment).to parse 'a.b = 3'
+      expect(parser.assignment).to parse 'a:high = 3'
+      expect(parser.assignment).to parse 'a: medium = 3'
+      expect(parser.assignment).to parse "a: \n low = 3"
+      expect(parser.assignment.parse('a:low=1')[:assignment])
+        .to have_key :precision
     end
 
     it 'parses selections' do
