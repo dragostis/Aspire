@@ -212,6 +212,16 @@ describe Parser do
       expect(parser.assignment).to parse 'arc = for (a : ar) {a + 1}'
     end
 
+    it 'parses selections' do
+      expect(parser.value).to parse 'a.b'
+      expect(parser.value.parse 'a.b').to have_key :selection
+      expect(parser.selection).to parse '_a_._b3_'
+      expect(parser.selection).to parse 'a.b.c.d'
+      expect(parser.selection).to_not parse 'a.'
+      expect(parser.selection).to_not parse 'a.b.'
+      expect(parser.selection).to_not parse 'a'
+    end
+
     it 'parses parenthesis-enclosed values' do
       expect(parser.value).to parse '((false))'
       expect(parser.enclosed).to parse '(((2.3)))'

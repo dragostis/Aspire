@@ -60,8 +60,8 @@ class Parser < Parslet::Parser
   end
 
   rule(:non_expression, label: 'non-expression') do
-    block | assignment | array | matrix | vector | color | float | integer |
-      boolean | identifier | enclosed
+    block | assignment | selection | array | matrix | vector | color | float |
+      integer | boolean | identifier | enclosed
   end
 
   rule(:expression, label: 'expression') { unary }
@@ -91,6 +91,11 @@ class Parser < Parslet::Parser
 
   rule(:assignment, label: 'assignment') do
     (identifier >> space >> str('=') >> space >> value).as(:assignment)
+  end
+
+  rule(:selection, label: 'selection') do
+    (identifier >> str('.') >> (selection | identifier).as(:field))
+      .as(:selection)
   end
 
   rule(:enclosed, label: 'parenthesis-enclosed value') do
