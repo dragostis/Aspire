@@ -90,7 +90,8 @@ class Parser < Parslet::Parser
   end
 
   rule(:assignment, label: 'assignment') do
-    (identifier >> space >> str('=') >> space >> value).as(:assignment)
+    ((selection | identifier) >> space >> str('=') >> space >> value)
+      .as(:assignment)
   end
 
   rule(:selection, label: 'selection') do

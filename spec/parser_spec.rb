@@ -210,6 +210,7 @@ describe Parser do
       expect(parser.assignment).to parse 'arc = {1;2}'
       expect(parser.assignment).to parse 'arc = if (1) {} else {}'
       expect(parser.assignment).to parse 'arc = for (a : ar) {a + 1}'
+      expect(parser.assignment).to parse 'a.b = 3'
     end
 
     it 'parses selections' do
