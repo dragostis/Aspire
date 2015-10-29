@@ -11,6 +11,7 @@ describe Parser do
       expect(parser.value).to parse '1+1'
       expect(parser.value).to parse '{1;1}'
       expect(parser.value).to parse 'a=1'
+      expect(parser.value).to parse 'a.b'
       expect(parser.value).to parse '[1]'
       expect(parser.value).to parse '((1,2),(3,4))'
       expect(parser.value).to parse '(1,2)'
@@ -221,6 +222,7 @@ describe Parser do
       expect(parser.selection).to_not parse 'a.'
       expect(parser.selection).to_not parse 'a.b.'
       expect(parser.selection).to_not parse 'a'
+      expect(parser.selection).to_not parse 'a.3'
     end
 
     it 'parses parenthesis-enclosed values' do
